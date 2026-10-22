@@ -22,6 +22,12 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fdd4fa6f-78f9-4e69-a389-5b080da5be6b"
+      }
+    },
+    "owner": "kimchiha"
   }
 }
