@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /books/{bookId} {
+      // Helper function kiểm tra người dùng đã đăng nhập
+      function isSignedIn() {
+        return request.auth != null && request.auth.uid != null;
+      }
+
+      // Helper function validate dữ liệu sách
+      function isValidBook(data) {
+        return data.userId == request.auth.uid
+          && data.title is string
+          && data.title.trim().size() > 0
+          && data.title.size() <= 100
+          && data.author is string
+          && data.author.trim().size() > 0
+          && data.author.size() <= 60
+          && data.genre in ['Fiction', 'Non-Fiction', 'Academic', 'Other']
+          && data.status in ['To Read', 'Reading', 'Finished']
+          && (!('rating' in data) || data.rating == null || (data.rating is int && data.rating >= 0 && data.rating <= 5))
+          && (!('notes' in data) || data.notes == null || (data.notes is string && data.notes.size() <= 300))
+          && (!('favorite' in data) || data.favorite is bool);
+      }
+
+      // Chỉ user sở hữu mới có quyền đọc document
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      // Chỉ user sở hữu mới có quyền tạo document hợp lệ
+      allow create: if isSignedIn() && isValidBook(request.resource.data);
+
+      // Chỉ user sở hữu mới có quyền cập nhật document hợp lệ
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && isValidBook(request.resource.data);
+
+      // Chỉ user sở hữu mới có quyền xóa document
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

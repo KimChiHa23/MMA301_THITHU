@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Thi_Thu_PE_MMA",
-    "slug": "Thi_Thu_PE_MMA",
+    "name": "BookShelf",
+    "slug": "bookshelf",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,6 +19,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
